@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised: 5/16/2020
+// Last revised 5/16/2020
 
 // Include the header we're defining methods for.
 #include "package_name/package_name.h"
