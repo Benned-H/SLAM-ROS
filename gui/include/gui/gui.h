@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/16/2020
+// Last revised 5/18/2020
 
 #ifndef GUI_H
 #define GUI_H
@@ -7,6 +7,7 @@
 #include "ros/ros.h"
 #include "std_msgs/ColorRGBA.h"
 #include "geometry_msgs/Pose.h"
+#include "nav_msgs/Odometry.h"
 #include "visualization_msgs/Marker.h"
 
 class GUI
@@ -15,10 +16,10 @@ class GUI
 		GUI(double diameter); // Constructor; could have input variables.
 		virtual ~GUI(); // Deconstructor
 		
+		void handlePose(const nav_msgs::Odometry::ConstPtr& msg);
+		
 		std_msgs::ColorRGBA color(double r, double g, double b, double a);
 		void update();
-		
-		//void handleMessageType(const package_name::DataType::ConstPtr& msg);
 		
 		ros::Publisher marker_pub;
 		

@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/16/2020
+// Last revised 5/18/2020
 
 #include "gui/gui.h"
 
@@ -12,15 +12,12 @@ GUI::GUI(double diameter) // Constructor
 
 GUI::~GUI() {} // Deconstructor
 
-/*
-void GUI::handleMessageType(const package_name::DataType::ConstPtr& msg)
+void GUI::handlePose(const nav_msgs::Odometry::ConstPtr& msg)
 {
-	_data = *msg;
-	_data2 = msg->position.x; // Might want to access subparts of the message.
-	
-	// We could call other functions or publish new information if we wanted.
+	_pose = msg->pose.pose;
+	update();
 	return;
-}*/
+}
 
 std_msgs::ColorRGBA GUI::color(double r, double g, double b, double a)
 {
@@ -41,19 +38,36 @@ void GUI::update()
 
 void GUI::drawPose(geometry_msgs::Pose pose)
 {
-	visualization_msgs::Marker marker;
-	marker.header.frame_id = "/gui";
-	marker.header.stamp = ros::Time::now();
-	marker.ns = "gui";
-	marker.id = 0;
-	marker.type = 3;
-	marker.action = visualization_msgs::Marker::ADD;
-	marker.pose = pose;
-	marker.scale.x = ROBOT_DIAMETER;
-	marker.scale.y = ROBOT_DIAMETER;
-	marker.scale.z = 0.15;
-	marker.color = color(0.0,1.0,0.0,1.0);
-	marker.lifetime = ros::Duration(); // Never auto-deletes.
+	visualization_msgs::Marker c; // cylinder for robot body
+	c.header.frame_id = "/gui";
+	c.header.stamp = ros::Time::now();
+	c.ns = "gui";
+	c.id = 0;
+	c.type = 3;
+	c.action = visualization_msgs::Marker::ADD;
+	c.pose = pose;
+	c.scale.x = ROBOT_DIAMETER;
+	c.scale.y = ROBOT_DIAMETER;
+	c.scale.z = 0.15;
+	c.color = color(0.0,1.0,0.0,0.5);
+	c.lifetime = ros::Duration(); // Never auto-deletes.
+	
+	visualization_msgs::Marker a; // arrow for robot heading
+	a.header.frame_id = "/gui";
+	a.header.stamp = ros::Time::now();
+	a.ns = "gui";
+	a.id = 1;
+	a.type = 0;
+	a.action = visualization_msgs::Marker::ADD;
+	a.pose = pose;
+	a.scale.x = 0.3;
+	a.scale.y = 0.05;
+	a.scale.z = 0.05;
+	a.color = color(0.0,1.0,0.0,1.0);
+	a.lifetime = ros::Duration(); // Never auto-deletes.
 		
-	marker_pub.publish(marker);
+	marker_pub.publish(c);
+	marker_pub.publish(a);
+	
+	return;
 }
