@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/18/2020
+// Last revised 5/19/2020
 
 #include "gui/gui.h"
 
@@ -14,6 +14,8 @@ int main(int argc, char* argv[])
 	
 	ros::Subscriber pose_sub = node_handle.subscribe("simulator/pose", 1,
 		&GUI::handlePose, &gui);
+	ros::Subscriber path_sub = node_handle.subscribe("planner/path", 1,
+		&GUI::handlePath, &gui);
 		
 	gui.marker_pub = node_handle.advertise<visualization_msgs::Marker>
 		("visualization_marker", 1 , true);

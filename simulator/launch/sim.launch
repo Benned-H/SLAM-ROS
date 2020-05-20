@@ -2,6 +2,9 @@
 	<node name="test_command_node" pkg="simulator" type="test_command_node"/>
 	<node name="simulator_node" pkg="simulator" type="simulator_node"/>
 	
+	<node name="grid_planner_node" pkg="planner" type="grid_planner_node"/>
+	<node name="query_publisher" pkg="planner" type="query_publisher"/>
+	
 	<node name="gui_node" pkg="gui" type="gui_node"/>
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find gui)/rviz/gui.rviz"/>
 </launch>
