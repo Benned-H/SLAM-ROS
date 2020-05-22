@@ -1,21 +1,21 @@
 // Author: Benned Hedegaard
-// Last revised 5/19/2020
+// Last revised 5/21/2020
 
 #include <math.h>
 
 // Include the header we're defining methods for.
-#include "planner/grid_planner.h"
+#include "planner/gridplanner.h"
 
 using namespace std;
 
-Grid_Planner::Grid_Planner(double discretization) // Constructor
+GridPlanner::GridPlanner(double discretization) // Constructor
 {
 	DISCRETIZATION = discretization;
 }
 
-Grid_Planner::~Grid_Planner() {} // Deconstructor
+GridPlanner::~GridPlanner() {} // Deconstructor
 
-void Grid_Planner::handleQuery(const planner::Query::ConstPtr& msg)
+void GridPlanner::handleQuery(const planner::Query::ConstPtr& msg)
 {
 	planner::Path p;
 	p.points = aStar(msg->start, msg->goal);
@@ -64,7 +64,7 @@ bool compNodes(NODE n1, NODE n2)
 }
 
 // Runs A* on a grid with the stored discretization.
-vector<geometry_msgs::Point> Grid_Planner::aStar(geometry_msgs::Point start, geometry_msgs::Point goal)
+vector<geometry_msgs::Point> GridPlanner::aStar(geometry_msgs::Point start, geometry_msgs::Point goal)
 {
 	// First create the four possible starting points on the grid near the start point.
 	int start_x_lower = floor(start.x/DISCRETIZATION);

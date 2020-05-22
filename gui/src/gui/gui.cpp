@@ -12,7 +12,7 @@ GUI::GUI(double diameter) // Constructor
 
 GUI::~GUI() {} // Deconstructor
 
-void GUI::handlePose(const nav_msgs::Odometry::ConstPtr& msg)
+void GUI::handleOdom(const nav_msgs::Odometry::ConstPtr& msg)
 {
 	_pose = msg->pose.pose;
 	update();

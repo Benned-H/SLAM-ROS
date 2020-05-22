@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 	
 	geometry_msgs::Point goal;
 		
-	double frequency = 5.0; // Desired rate of the timer in hz
+	double frequency = 1.0; // Desired rate of the timer in hz
 	ros::Rate timer(frequency);
 	while (ros::ok())
 	{

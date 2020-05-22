@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/18/2020
+// Last revised 5/21/2020
 
 #include "ros/ros.h"
 #include "simulator/simulator.h"
@@ -16,8 +16,8 @@ int main(int argc, char* argv[])
 	ros::Subscriber command_sub = node_handle.subscribe("motion_commands", 1,
 		&Simulator::handleMotionCommand, &sim);
 	
-	ros::Publisher pose_pub = node_handle.advertise<nav_msgs::Odometry>
-		("simulator/pose", 1, true);
+	ros::Publisher odom_pub = node_handle.advertise<nav_msgs::Odometry>
+		("simulator/odom", 1, true);
 		
 	sleep(1); // Wait 1 second; gives time for ROS connections to be made.
 		
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	{
 		ros::spinOnce(); // Calls all waiting callbacks, i.e. handles messages.
 		sim.step(1.0/frequency); // Advance the class' simulation/belief.
-		pose_pub.publish(sim.getOdometry());
+		odom_pub.publish(sim.getOdometry());
 		timer.sleep(); // Waits rest of cycle to assure proper hz
 	}
 	

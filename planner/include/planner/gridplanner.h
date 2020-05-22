@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/19/2020
+// Last revised 5/21/2020
 
 #ifndef GRID_PLANNER_H
 #define GRID_PLANNER_H
@@ -12,11 +12,11 @@
 
 using namespace std;
 
-class Grid_Planner
+class GridPlanner
 {
 	public: // These data members can be accessed by other classes.
-		Grid_Planner(double discretization); // Constructor
-		virtual ~Grid_Planner(); // Deconstructor
+		GridPlanner(double discretization); // Constructor
+		virtual ~GridPlanner(); // Deconstructor
 		
 		// Declare message handling functions for the class.
 		void handleQuery(const planner::Query::ConstPtr& msg);

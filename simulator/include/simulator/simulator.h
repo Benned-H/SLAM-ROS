@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/18/2020
+// Last revised 5/21/2020
 
 #ifndef SIMULATOR_H
 #define SIMULATOR_H

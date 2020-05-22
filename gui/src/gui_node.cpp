@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/19/2020
+// Last revised 5/21/2020
 
 #include "gui/gui.h"
 
@@ -12,8 +12,8 @@ int main(int argc, char* argv[])
 	ros::init(argc, argv, "gui");
 	ros::NodeHandle node_handle; // We use this to set up ROS connections.
 	
-	ros::Subscriber pose_sub = node_handle.subscribe("simulator/pose", 1,
-		&GUI::handlePose, &gui);
+	ros::Subscriber odom_sub = node_handle.subscribe("simulator/odom", 1,
+		&GUI::handleOdom, &gui);
 	ros::Subscriber path_sub = node_handle.subscribe("planner/path", 1,
 		&GUI::handlePath, &gui);
 		
