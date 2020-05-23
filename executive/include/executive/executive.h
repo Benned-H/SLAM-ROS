@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/22/2020
 
 #ifndef EXECUTIVE_H
 #define EXECUTIVE_H
@@ -30,6 +30,8 @@ class Executive
 	protected: // These data members are inaccessible outside the class.
 		nav_msgs::Odometry _odom;
 		std::vector<geometry_msgs::Point> _waypoints;
+		
+		bool hasOdom;
 };
 
 #endif /* EXECUTIVE_H */

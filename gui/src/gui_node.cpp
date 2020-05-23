@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/22/2020
 
 #include "gui/gui.h"
 
@@ -16,6 +16,8 @@ int main(int argc, char* argv[])
 		&GUI::handleOdom, &gui);
 	ros::Subscriber path_sub = node_handle.subscribe("planner/path", 1,
 		&GUI::handlePath, &gui);
+	ros::Subscriber lookahead_sub = node_handle.subscribe("pfc/goal_point", 1,
+		&GUI::handleLookaheadPoint, &gui);
 		
 	gui.marker_pub = node_handle.advertise<visualization_msgs::Marker>
 		("visualization_marker", 1 , true);

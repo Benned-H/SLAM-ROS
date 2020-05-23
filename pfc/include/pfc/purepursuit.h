@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/22/2020
 
 #ifndef PURE_PURSUIT_H
 #define PURE_PURSUIT_H
@@ -41,6 +41,9 @@ class PurePursuit
 		
 		nav_msgs::Odometry _odom;
 		planner::Path _path;
+		
+		bool hasOdom;
+		bool hasPath;
 };
 
 #endif /* PURE_PURSUIT_H */

@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/23/2020
 
 #ifndef GRID_PLANNER_H
 #define GRID_PLANNER_H
@@ -9,6 +9,7 @@
 #include "geometry_msgs/Point.h"
 #include "planner/Query.h"
 #include "planner/Path.h"
+#include "std_msgs/UInt32.h"
 
 using namespace std;
 
@@ -22,6 +23,8 @@ class GridPlanner
 		void handleQuery(const planner::Query::ConstPtr& msg);
 		
 		ros::Publisher path_pub;
+		ros::Publisher open_list_size_pub;
+		ros::Publisher closed_list_size_pub;
 		
 		double DISCRETIZATION;
 		

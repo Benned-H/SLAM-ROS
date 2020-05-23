@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/23/2020
 
 #include "pfc/purepursuit.h"
 
@@ -12,6 +12,8 @@ PurePursuit::PurePursuit(double lookahead, double turn_angle, double forward_v,
 	TURNING_ANGLE = turn_angle;
 	DEFAULT_V = fabs(forward_v); // Ensure these are positive jic
 	DEFAULT_W = fabs(turning_w);
+	hasOdom = false;
+	hasPath = false;
 }
 
 PurePursuit::~PurePursuit() {} // Deconstructor
@@ -19,7 +21,8 @@ PurePursuit::~PurePursuit() {} // Deconstructor
 void PurePursuit::handleOdom(const nav_msgs::Odometry::ConstPtr& msg)
 {
 	_odom = *msg;
-	purePursuit();
+	hasOdom = true;
+	if (hasPath) purePursuit();
 	return;
 }
 
@@ -27,15 +30,17 @@ void PurePursuit::handlePath(const planner::Path::ConstPtr& msg)
 {
 	if ( (msg->points).size() == 0 )
 		return;
+		
 	_path = *msg;
-	purePursuit();
+	hasPath = true;
+	if (hasOdom) purePursuit();
 	return;
 }
 
 // Formula from Wikipedia for now. More quaternion understanding is needed.
 double PurePursuit::quat_to_yaw(geometry_msgs::Quaternion q)
 {
-	return atan2(2.0*(q.w*q.z + q.x*q.y), 1.0 - 2.0*(q.y*q.y + q.z*q.z));
+	return atan2(2.0*(q.w*q.z + q.x*q.y), q.w*q.w+q.x*q.x-q.y*q.y-q.z*q.z);
 }
 
 double euclidean(double x1, double y1, double x2, double y2)
@@ -67,8 +72,12 @@ geometry_msgs::Point PurePursuit::goalPoint(geometry_msgs::Pose pose,
 	}
 	
 	// If the closest path point is the last, just return that.
-	if (path.points[closest_path_index] == path.points.back())
-		return path.points[closest_path_index];
+	geometry_msgs::Point last_point =  path.points.back();
+	if (path.points[closest_path_index] == last_point)
+		return last_point;
+	// Also target the final path point if we're close enough.
+	if (euclidean(xr, yr, last_point.x, last_point.y) < LOOKAHEAD)
+		return last_point;
 	
 	// 3. Find the goal point by moving up the path. If the current point is
 	// ever the final point in the path, the search has failed.
@@ -143,8 +152,7 @@ geometry_msgs::Point PurePursuit::goalPoint(geometry_msgs::Pose pose,
 	}
 	
 	// Otherwise we've failed to find a valid lookahead point.
-	// Return the closest path point.
-	return path.points[closest_path_index];
+	return path.points[closest_path_index]; // Just return closest.
 }
 
 // Formats an angle to be between -PI and PI.
@@ -167,9 +175,21 @@ void PurePursuit::purePursuit()
 	double yr = _odom.pose.pose.position.y;
 	double heading = quat_to_yaw(_odom.pose.pose.orientation);
 	
+	double goal_distance = euclidean(xr, yr, goal.x, goal.y);
+	
 	geometry_msgs::Twist command;
 	command.linear.x = 0.0;
 	command.angular.z = 0.0;
+	
+	// If we're already close, send a 'STOP' command.
+	if (goal_distance < 0.03)
+	{
+		goal.x = xr;
+		goal.y = yr;
+		goal_point_pub.publish(goal);
+		command_pub.publish(command);
+		return;
+	}
 	
 	// First turn to face the goal point if we aren't yet facing it.
 	double global_heading = atan2(goal.y - yr, goal.x - xr);
@@ -189,8 +209,7 @@ void PurePursuit::purePursuit()
 	else
 	{
 		// Otherwise we drive towards the point.
-		double goal_distance = euclidean(xr, yr, goal.x, goal.y);
-		double goal_local_x = -goal_distance*sin(relative_heading);
+		double goal_local_x = goal_distance*sin(relative_heading);
 		double curvature = 2.0*goal_local_x/(LOOKAHEAD*LOOKAHEAD);
 		command.linear.x = DEFAULT_V;
 		command.angular.z = curvature*DEFAULT_V;

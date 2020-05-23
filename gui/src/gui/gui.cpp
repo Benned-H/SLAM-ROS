@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/19/2020
+// Last revised 5/22/2020
 
 #include "gui/gui.h"
 
@@ -8,6 +8,8 @@ using namespace std;
 GUI::GUI(double diameter) // Constructor
 {
 	ROBOT_DIAMETER = diameter;
+	hasPath = false;
+	hasLookahead = false;
 }
 
 GUI::~GUI() {} // Deconstructor
@@ -22,6 +24,15 @@ void GUI::handleOdom(const nav_msgs::Odometry::ConstPtr& msg)
 void GUI::handlePath(const planner::Path::ConstPtr& msg)
 {
 	_path = *msg;
+	hasPath = true;
+	update();
+	return;
+}
+
+void GUI::handleLookaheadPoint(const geometry_msgs::Point::ConstPtr& msg)
+{
+	_lookahead = *msg;
+	hasLookahead = true;
 	update();
 	return;
 }
@@ -39,7 +50,8 @@ std_msgs::ColorRGBA GUI::color(double r, double g, double b, double a)
 void GUI::update()
 {
 	drawPose(_pose, 0.0, 1.0, 0.0);
-	drawPath(_path, 0.847, 0.204, 0.922);
+	if (hasPath) drawPath(_path, 0.847, 0.204, 0.922);
+	if (hasLookahead) drawPoint(_lookahead, 0.1, 0.0, 0.8, 1.0);
 	
 	return;
 }
@@ -93,6 +105,28 @@ void GUI::drawPath(planner::Path path, double r, double g, double b)
 	p.color = color(r,g,b,0.75);
 	p.lifetime = ros::Duration(); // Never auto-deletes.
 	p.points = path.points;
+	
+	marker_pub.publish(p);
+	
+	return;
+}
+
+void GUI::drawPoint(geometry_msgs::Point point, double radius, double r,
+			double g, double b)
+{
+	visualization_msgs::Marker p;
+	p.header.frame_id = "/gui";
+	p.header.stamp = ros::Time::now();
+	p.ns = "gui";
+	p.id = 3;
+	p.type = 2;
+	p.action = visualization_msgs::Marker::ADD;
+	p.scale.x = 0.03;
+	p.scale.y = 0.03;
+	p.scale.z = 0.03;
+	p.color = color(r,g,b,0.75);
+	p.lifetime = ros::Duration(); // Never auto-deletes.
+	p.pose.position = point;
 	
 	marker_pub.publish(p);
 	

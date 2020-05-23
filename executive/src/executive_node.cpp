@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/23/2020
 
 #include "executive/executive.h"
 
@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	Executive exec(0.03, 0.5); // Inputs are reached and replan cutoffs.
+	Executive exec(0.05, 0.5); // Inputs are reached and replan cutoffs.
 	
 	ros::init(argc, argv, "executive_node");
 	ros::NodeHandle node_handle; // We use this to set up ROS connections.

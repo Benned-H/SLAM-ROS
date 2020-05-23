@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/23/2020
 
 #include "pfc/purepursuit.h"
 
@@ -9,11 +9,13 @@ int main(int argc, char* argv[])
 {
 	// Inputs are lookahead distance, required heading difference to drive to
 	// a goal point, and default forward/turning velocities.
-	PurePursuit pfc(0.2, M_PI/4.0, 0.5, M_PI/2.0);
+	PurePursuit pfc(0.3, M_PI/4.0, 0.5, 0.6);
 	
 	ros::init(argc, argv, "pure_pursuit_node");
 	ros::NodeHandle node_handle; // We use this to set up ROS connections.
 	
+	ros::Subscriber odom_sub = node_handle.subscribe("simulator/odom", 1,
+		&PurePursuit::handleOdom, &pfc);
 	ros::Subscriber path_sub = node_handle.subscribe("planner/path", 1,
 		&PurePursuit::handlePath, &pfc);
 	

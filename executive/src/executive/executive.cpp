@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/21/2020
+// Last revised 5/22/2020
 
 // Include the header we're defining methods for.
 #include "executive/executive.h"
@@ -10,6 +10,7 @@ Executive::Executive(double reached, double replan) // Constructor
 {
 	REACHED = reached;
 	REPLAN = replan;
+	hasOdom = false;
 }
 
 Executive::~Executive() {} // Deconstructor
@@ -22,6 +23,7 @@ double euclidean(double x1, double y1, double x2, double y2)
 void Executive::handleOdom(const nav_msgs::Odometry::ConstPtr& msg)
 {
 	_odom = *msg;
+	hasOdom = true;
 	
 	if (_waypoints.size() == 0) // Exit if there are no more waypoints.
 		return;
@@ -52,7 +54,7 @@ void Executive::handleWaypoint(const geometry_msgs::Point::ConstPtr& msg)
 {
 	_waypoints.push_back(*msg);
 	
-	if (_waypoints.size() == 1) // New waypoint is our first.
+	if (_waypoints.size() == 1 && hasOdom) // New waypoint is our first.
 		sendQuery();
 	
 	return;
