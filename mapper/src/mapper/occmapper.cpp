@@ -1,0 +1,144 @@
+// Author: Benned Hedegaard
+// Last revised 5/26/2020
+
+#include "mapper/occmapper.h"
+
+using namespace std;
+
+// Formula from Wikipedia for now. More quaternion understanding is needed.
+double quat_to_yaw(geometry_msgs::Quaternion q)
+{
+	return atan2(2.0*(q.w*q.z + q.x*q.y), q.w*q.w+q.x*q.x-q.y*q.y-q.z*q.z);
+}
+
+// Constructor. Inputs are grid resolution, width/height of grid in # cells.
+OccMapper::OccMapper(double res, unsigned int width, unsigned int height,
+	double obstacle_width, geometry_msgs::Pose origin)
+{
+	RESOLUTION = res;
+	if (RESOLUTION == 0.0)
+		RESOLUTION = 0.01;
+	_map.info.resolution = RESOLUTION;
+	_map.info.width = width;
+	_map.info.height = height;
+	_map.info.origin = origin;
+	
+	vector<int8_t> data(width*height, 0);
+	_map.data = data;
+	
+	MIN_X = origin.position.x - 0.5*RESOLUTION;
+	MAX_X = origin.position.x + (width - 0.5)*RESOLUTION;
+	MIN_Y = origin.position.y - (height - 0.5)*RESOLUTION;
+	MAX_Y = origin.position.y + 0.5*RESOLUTION;
+	
+	_occ_steps = floor(obstacle_width/RESOLUTION);
+	
+	return;
+}
+
+OccMapper::~OccMapper() {} // Deconstructor
+
+void OccMapper::handleOdom(const nav_msgs::Odometry::ConstPtr& msg)
+{
+	_pose = msg->pose.pose;
+	return;
+}
+
+void OccMapper::handleLaserscan(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+	_scan = *msg;
+	update(_pose, _scan);
+	return;
+}
+
+// Returns if the given (x,y) point is in the map's range.
+bool OccMapper::inMap(double x, double y)
+{
+	return ((MIN_X < x) && (x < MAX_X) && (MIN_Y < y) && (y < MAX_Y));
+}
+
+// Returns the map's column index for the given x coordinate.
+int OccMapper::x_to_col(double x)
+{
+	return floor((x - _map.info.origin.position.x)/RESOLUTION + 0.5);
+}
+
+// Returns the map's row index for the given y coordinate.
+int OccMapper::y_to_row(double y)
+{
+	return floor((_map.info.origin.position.y - y)/RESOLUTION + 0.5);
+}
+
+// Returns the index in the grid of the given (x,y) point.
+int OccMapper::point_to_index(double x, double y)
+{
+	return _map.info.width*y_to_row(y) + x_to_col(x);
+}
+
+void OccMapper::update(geometry_msgs::Pose pose, sensor_msgs::LaserScan scan)
+{
+	if (scan.ranges.size() == 0)
+		return;
+	
+	double heading = quat_to_yaw(pose.orientation);
+	
+	// Track cells that need to be updated from each laser.
+	set<int> occupied_cells;
+	set<int> free_cells;
+	
+	for (int i = 0; i < scan.ranges.size(); i++)
+	{
+		// Clear sets for each laser; update cells at most once per laser.
+		occupied_cells.clear();
+		free_cells.clear();
+		
+		if ((scan.ranges[i] < scan.range_min) || (scan.ranges[i] > scan.range_max))
+			continue; // Skip invalid laser returns.
+		
+		double bearing = scan.angle_min + i*scan.angle_increment;
+		double global_bearing = heading + bearing;
+		
+		int free_steps = floor(scan.ranges[i]/RESOLUTION);
+		
+		// Step along the laser scan; all cells here are free.
+		for (int step = 0; step < free_steps; step++)
+		{
+			double range = step*RESOLUTION;
+			double x = pose.position.x + range*cos(global_bearing);
+			double y = pose.position.y + range*sin(global_bearing);
+			if (!inMap(x, y))
+				continue;
+			int cell_index = point_to_index(x, y);
+			free_cells.insert(cell_index);
+		}
+		
+		// Step across the occupied range for this laser.
+		for (int step = 0; step < _occ_steps; step++)
+		{
+			double range = scan.ranges[i] + step*RESOLUTION;
+			double x = pose.position.x + range*cos(global_bearing);
+			double y = pose.position.y + range*sin(global_bearing);
+			if (!inMap(x, y))
+				continue;
+			int cell_index = point_to_index(x, y);
+			occupied_cells.insert(cell_index);
+		}
+		
+		// Now update each grid cell accordingly.
+		for (set<int>::iterator free = free_cells.begin();
+			free != free_cells.end(); ++free)
+		{
+			_map.data[*free] = _map.data[*free] + l_free - l0;
+		}
+		
+		for (set<int>::iterator occ = occupied_cells.begin();
+			occ != occupied_cells.end(); ++occ)
+		{
+			_map.data[*occ] = _map.data[*occ] + l_occ - l0;
+		}
+	}
+	
+	_map.header.stamp = ros::Time::now();
+	map_pub.publish(_map);
+	return;
+}
