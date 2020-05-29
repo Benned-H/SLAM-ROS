@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/26/2020
+// Last revised 5/28/2020
 
 #include "mapper/occmapper.h"
 
@@ -26,12 +26,17 @@ OccMapper::OccMapper(double res, unsigned int width, unsigned int height,
 	vector<int8_t> data(width*height, 0);
 	_map.data = data;
 	
-	MIN_X = origin.position.x - 0.5*RESOLUTION;
-	MAX_X = origin.position.x + (width - 0.5)*RESOLUTION;
-	MIN_Y = origin.position.y - (height - 0.5)*RESOLUTION;
-	MAX_Y = origin.position.y + 0.5*RESOLUTION;
+	MIN_X = origin.position.x;
+	MAX_X = origin.position.x + width*RESOLUTION;
+	MIN_Y = origin.position.y;
+	MAX_Y = origin.position.y + width*RESOLUTION;
 	
 	_occ_steps = floor(obstacle_width/RESOLUTION);
+	
+	// What do these log-odds actually mean? What values make sense?
+	l0 = 0.0;
+	l_free = -1.27875;
+	l_occ = 1.27875;
 	
 	return;
 }
@@ -51,6 +56,24 @@ void OccMapper::handleLaserscan(const sensor_msgs::LaserScan::ConstPtr& msg)
 	return;
 }
 
+void OccMapper::handleClick(const geometry_msgs::PointStamped::ConstPtr& msg)
+{
+	cout << "Handling point..." << endl;
+	int index = point_to_index(msg->point.x, msg->point.y);
+	cout << "Index was " << index << "." << endl;
+	_map.data[index] = 100;
+	publishMap();
+	cout << "New map published." << endl;
+	return;
+}
+
+void OccMapper::publishMap()
+{
+	_map.header.stamp = ros::Time::now();
+	map_pub.publish(_map);
+	return;
+}
+
 // Returns if the given (x,y) point is in the map's range.
 bool OccMapper::inMap(double x, double y)
 {
@@ -60,13 +83,13 @@ bool OccMapper::inMap(double x, double y)
 // Returns the map's column index for the given x coordinate.
 int OccMapper::x_to_col(double x)
 {
-	return floor((x - _map.info.origin.position.x)/RESOLUTION + 0.5);
+	return floor((x - _map.info.origin.position.x)/RESOLUTION);
 }
 
 // Returns the map's row index for the given y coordinate.
 int OccMapper::y_to_row(double y)
 {
-	return floor((_map.info.origin.position.y - y)/RESOLUTION + 0.5);
+	return floor((y - _map.info.origin.position.y)/RESOLUTION);
 }
 
 // Returns the index in the grid of the given (x,y) point.
@@ -128,17 +151,26 @@ void OccMapper::update(geometry_msgs::Pose pose, sensor_msgs::LaserScan scan)
 		for (set<int>::iterator free = free_cells.begin();
 			free != free_cells.end(); ++free)
 		{
-			_map.data[*free] = _map.data[*free] + l_free - l0;
+			double result = _map.data[*free] + l_free - l0;
+			if (result < 0.0)
+				result = 0;
+			if (result > 100.0)
+				result = 100;
+			_map.data[*free] = (int) result;
 		}
 		
 		for (set<int>::iterator occ = occupied_cells.begin();
 			occ != occupied_cells.end(); ++occ)
 		{
-			_map.data[*occ] = _map.data[*occ] + l_occ - l0;
+			double result = _map.data[*occ] + l_occ - l0;
+			if (result < 0.0)
+				result = 0;
+			if (result > 100.0)
+				result = 100;
+			_map.data[*occ] = (int) result;
 		}
 	}
 	
-	_map.header.stamp = ros::Time::now();
-	map_pub.publish(_map);
+	publishMap();
 	return;
 }

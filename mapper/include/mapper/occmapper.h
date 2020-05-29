@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/26/2020
+// Last revised 5/28/2020
 
 #ifndef OCC_MAPPER_H
 #define OCC_MAPPER_H
@@ -9,6 +9,7 @@
 #include "ros/ros.h"
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/Odometry.h"
+#include "geometry_msgs/PointStamped.h"
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/Quaternion.h"
 #include "sensor_msgs/LaserScan.h"
@@ -23,6 +24,9 @@ class OccMapper
 		// Declare message handling functions for the class.
 		void handleOdom(const nav_msgs::Odometry::ConstPtr& msg);
 		void handleLaserscan(const sensor_msgs::LaserScan::ConstPtr& msg);
+		void handleClick(const geometry_msgs::PointStamped::ConstPtr& msg);
+		
+		void publishMap();
 		
 		// Declare any ROS publishers.
 		ros::Publisher map_pub;

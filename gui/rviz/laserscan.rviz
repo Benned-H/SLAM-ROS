@@ -6,7 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /LaserScan1/Status1
+        - /Map1
       Splitter Ratio: 0.5
     Tree Height: 416
   - Class: rviz/Selection
@@ -75,7 +75,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 1020
+      Max Intensity: 1016
       Min Color: 0; 0; 0
       Min Intensity: 1008
       Name: LaserScan
@@ -89,6 +89,16 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: true
+      Enabled: true
+      Name: Map
+      Topic: mapper/map
+      Unreliable: false
+      Use Timestamp: false
       Value: true
   Enabled: true
   Global Options:
@@ -118,7 +128,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.0601725578308105
+      Distance: 8.571125030517578
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -133,10 +143,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1853971481323242
+      Pitch: 0.9853973388671875
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.20040225982666
+      Yaw: 4.155402183532715
     Saved: ~
 Window Geometry:
   Displays:
