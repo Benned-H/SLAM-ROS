@@ -8,11 +8,14 @@ project(gui)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  visualization_msgs
-  std_msgs
   geometry_msgs
   planner
+  roscpp
+  simulator
+  std_msgs
+  tf2
+  tf2_ros
+  visualization_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -72,7 +75,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   visualization_msgs
+#   geometry_msgs#   std_msgs#   visualization_msgs
 # )
 
 ################################################
@@ -107,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 	INCLUDE_DIRS include
 	LIBRARIES gui
-#  CATKIN_DEPENDS roscpp visualization_msgs
+#  CATKIN_DEPENDS geometry_msgs planner roscpp simulator std_msgs tf2 tf2_ros visualization_msgs
 #  DEPENDS system_lib
 )
 
@@ -119,7 +122,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
 	include
- 	${catkin_INCLUDE_DIRS}
+	${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -134,6 +137,7 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/gui_node.cpp)
+add_executable(transform_node src/transform_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -150,6 +154,8 @@ target_link_libraries(${PROJECT_NAME}_node
 	${catkin_LIBRARIES}
 	gui
 )
+
+target_link_libraries(transform_node ${catkin_LIBRARIES})
 
 #############
 ## Install ##

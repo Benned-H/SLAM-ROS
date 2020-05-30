@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/28/2020
+// Last revised 5/29/2020
 
 #ifndef OCC_MAPPER_H
 #define OCC_MAPPER_H
@@ -18,7 +18,8 @@ class OccMapper
 {
 	public: // These data members can be accessed by other classes.
 		OccMapper(double res, unsigned int width, unsigned int height,
-	double obstacle_width, geometry_msgs::Pose origin);
+	double obstacle_width, geometry_msgs::Pose origin, double p0,
+	double p_free, double p_occ);
 		virtual ~OccMapper(); // Deconstructor
 		
 		// Declare message handling functions for the class.

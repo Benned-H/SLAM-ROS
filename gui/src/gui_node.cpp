@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/22/2020
+// Last revised 5/29/2020
 
 #include "gui/gui.h"
 
@@ -18,6 +18,8 @@ int main(int argc, char* argv[])
 		&GUI::handlePath, &gui);
 	ros::Subscriber lookahead_sub = node_handle.subscribe("pfc/goal_point", 1,
 		&GUI::handleLookaheadPoint, &gui);
+	ros::Subscriber obstacles_sub = node_handle.subscribe("simulator/obstacles",
+		1, &GUI::handleObstacles, &gui);
 		
 	gui.marker_pub = node_handle.advertise<visualization_msgs::Marker>
 		("visualization_marker", 1 , true);

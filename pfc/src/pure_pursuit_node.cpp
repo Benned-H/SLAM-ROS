@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 {
 	// Inputs are lookahead distance, required heading difference to drive to
 	// a goal point, and default forward/turning velocities.
-	PurePursuit pfc(0.3, M_PI/4.0, 0.5, 0.6);
+	PurePursuit pfc(0.5, M_PI/4.0, 0.5, 0.6);
 	
 	ros::init(argc, argv, "pure_pursuit_node");
 	ros::NodeHandle node_handle; // We use this to set up ROS connections.

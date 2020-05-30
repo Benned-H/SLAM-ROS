@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/28/2020
+// Last revised 5/29/2020
 
 #include "mapper/occmapper.h"
 
@@ -8,12 +8,20 @@ using namespace std;
 // Formula from Wikipedia for now. More quaternion understanding is needed.
 double quat_to_yaw(geometry_msgs::Quaternion q)
 {
-	return atan2(2.0*(q.w*q.z + q.x*q.y), q.w*q.w+q.x*q.x-q.y*q.y-q.z*q.z);
+	return atan2(2.0*(q.w*q.z + q.x*q.y), 1.0 - 2.0*(q.y*q.y + q.z*q.z));
 }
 
-// Constructor. Inputs are grid resolution, width/height of grid in # cells.
+// Returns log-odds representation of the given probability.
+double log_odds(double probability)
+{
+	return log( probability / (1.0 - probability) );
+}
+
+// Constructor. Inputs are grid resolution, width/height of grid in # cells,
+// origin of the map, and probabilities: prior, free, occupied.
 OccMapper::OccMapper(double res, unsigned int width, unsigned int height,
-	double obstacle_width, geometry_msgs::Pose origin)
+	double obstacle_width, geometry_msgs::Pose origin, double p0,
+	double p_free, double p_occ)
 {
 	RESOLUTION = res;
 	if (RESOLUTION == 0.0)
@@ -26,17 +34,19 @@ OccMapper::OccMapper(double res, unsigned int width, unsigned int height,
 	vector<int8_t> data(width*height, 0);
 	_map.data = data;
 	
+	// (0,0) in the map is its bottom-left corner in the 2D plane.
 	MIN_X = origin.position.x;
 	MAX_X = origin.position.x + width*RESOLUTION;
 	MIN_Y = origin.position.y;
 	MAX_Y = origin.position.y + width*RESOLUTION;
 	
+	// How many steps of size resolution are obstacles deep?
 	_occ_steps = floor(obstacle_width/RESOLUTION);
 	
-	// What do these log-odds actually mean? What values make sense?
-	l0 = 0.0;
-	l_free = -1.27875;
-	l_occ = 1.27875;
+	// Input appropriate p0, p_free, and p_occ.
+	l0 = log_odds(p0);
+	l_free = log_odds(p_free);
+	l_occ = log_odds(p_occ);
 	
 	return;
 }
@@ -118,7 +128,7 @@ void OccMapper::update(geometry_msgs::Pose pose, sensor_msgs::LaserScan scan)
 		if ((scan.ranges[i] < scan.range_min) || (scan.ranges[i] > scan.range_max))
 			continue; // Skip invalid laser returns.
 		
-		double bearing = scan.angle_min + i*scan.angle_increment;
+		double bearing = scan.angle_min + i*scan.angle_increment; // radians
 		double global_bearing = heading + bearing;
 		
 		int free_steps = floor(scan.ranges[i]/RESOLUTION);
