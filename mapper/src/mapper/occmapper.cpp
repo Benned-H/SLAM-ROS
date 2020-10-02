@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/29/2020
+// Last revised 8/27/2020
 
 #include "mapper/occmapper.h"
 
@@ -19,7 +19,7 @@ double log_odds(double probability)
 
 // Constructor. Inputs are grid resolution, width/height of grid in # cells,
 // origin of the map, and probabilities: prior, free, occupied.
-OccMapper::OccMapper(double res, unsigned int width, unsigned int height,
+OccMapper::OccMapper(double res, int threshold, unsigned int width, unsigned int height,
 	double obstacle_width, geometry_msgs::Pose origin, double p0,
 	double p_free, double p_occ)
 {
@@ -42,6 +42,7 @@ OccMapper::OccMapper(double res, unsigned int width, unsigned int height,
 	
 	// How many steps of size resolution are obstacles deep?
 	_occ_steps = floor(obstacle_width/RESOLUTION);
+	_threshold = threshold;
 	
 	// Input appropriate p0, p_free, and p_occ.
 	l0 = log_odds(p0);
@@ -82,6 +83,17 @@ void OccMapper::publishMap()
 	_map.header.stamp = ros::Time::now();
 	map_pub.publish(_map);
 	return;
+}
+
+// Returns if a given cell is occupied.
+bool OccMapper::occupied(double x, double y)
+{
+	if (inMap(x, y)) {
+		int index = point_to_index(x, y);
+		return (_map.data[index] > _threshold);
+	} else {
+		return true;
+	}
 }
 
 // Returns if the given (x,y) point is in the map's range.

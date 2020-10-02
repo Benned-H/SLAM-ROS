@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	message_generation
 	message_runtime
+	mapper
 )
 
 ## System dependencies are found with CMake's conventions
@@ -153,6 +154,7 @@ add_dependencies(query_publisher ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 target_link_libraries(grid_planner_node
 	${catkin_LIBRARIES}
 	gridplanner
+	occmapper
 )
 
 target_link_libraries(query_publisher

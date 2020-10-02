@@ -16,10 +16,11 @@ int main(int argc, char* argv[])
 	origin.orientation.z = 0.0;
 	origin.orientation.w = 1.0;
 
-	/* Constructor. Inputs are grid resolution, width/height of grid in # cells,
-	origin of the map, and probability of a cell being occupied given:
-	prior, laser thinks it's free, laser thinks it's occupied. */
-	OccMapper occ(0.1, 100, 100, 0.2, origin, 0.3, 0.05, 0.95);
+	/* Constructor. Inputs are grid resolution, occupancy threshold,
+	width/height of grid in # cells, origin of the map, and probability of a
+	cell being occupied given:
+		prior, laser thinks it's free, laser thinks it's occupied. */
+	OccMapper occ(0.1, 50, 100, 100, 0.2, origin, 0.3, 0.05, 0.95);
 	
 	ros::init(argc, argv, "occmapper_node");
 	ros::NodeHandle node_handle; // We use this to set up ROS connections.

@@ -17,5 +17,5 @@
 	
 	<node name="gui_node" pkg="gui" type="gui_node"/>
 	<node name="transform_node" pkg="gui" type="transform_node"/>
-	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find gui)/rviz/gui.rviz"/>
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find gui)/rviz/laserscan.rviz"/>
 </launch>

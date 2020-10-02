@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/29/2020
+// Last revised 8/27/2020
 
 #ifndef OCC_MAPPER_H
 #define OCC_MAPPER_H
@@ -17,7 +17,7 @@
 class OccMapper
 {
 	public: // These data members can be accessed by other classes.
-		OccMapper(double res, unsigned int width, unsigned int height,
+		OccMapper(double res, int threshold, unsigned int width, unsigned int height,
 	double obstacle_width, geometry_msgs::Pose origin, double p0,
 	double p_free, double p_occ);
 		virtual ~OccMapper(); // Deconstructor
@@ -28,6 +28,7 @@ class OccMapper
 		void handleClick(const geometry_msgs::PointStamped::ConstPtr& msg);
 		
 		void publishMap();
+		bool occupied(double x, double y);
 		
 		// Declare any ROS publishers.
 		ros::Publisher map_pub;
@@ -42,6 +43,8 @@ class OccMapper
 		double l_occ; // Log-odds of occupied cell given laser hit.
 		double l_free; // Log-odds of free cell given laser passes through.
 		
+		nav_msgs::OccupancyGrid _map;
+		
 	protected: // These data members are inaccessible outside the class.
 		int x_to_col(double x);
 		int y_to_row(double y);
@@ -49,11 +52,10 @@ class OccMapper
 		bool inMap(double x, double y);
 		void update(geometry_msgs::Pose pose, sensor_msgs::LaserScan scan);
 		
-		nav_msgs::OccupancyGrid _map;
-		
 		geometry_msgs::Pose _pose;
 		sensor_msgs::LaserScan _scan;
 		int _occ_steps; // Depth of obstacles in steps of size RESOLUTION.
+		int _threshold; // We consider cells with this value or greater occupied.
 };
 
 #endif /* OCC_MAPPER_H */

@@ -1,5 +1,5 @@
 // Author: Benned Hedegaard
-// Last revised 5/23/2020
+// Last revised 8/27/2020
 
 #include <math.h>
 
@@ -7,7 +7,7 @@
 
 using namespace std;
 
-GridPlanner::GridPlanner(double discretization) // Constructor
+GridPlanner::GridPlanner(double discretization, geometry_msgs::Pose map_origin) : cost_map( 0.1, 50, 100, 100, 0.2, map_origin, 0.3, 0.05, 0.95) // Constructor
 {
 	DISCRETIZATION = discretization;
 }
@@ -19,6 +19,12 @@ void GridPlanner::handleQuery(const planner::Query::ConstPtr& msg)
 	planner::Path p;
 	p.points = aStar(msg->start, msg->goal);
 	path_pub.publish(p);
+	return;
+}
+
+void GridPlanner::handleMap(const nav_msgs::OccupancyGrid::ConstPtr& msg)
+{
+	cost_map._map = *msg;
 	return;
 }
 
@@ -128,6 +134,12 @@ vector<geometry_msgs::Point> GridPlanner::aStar(geometry_msgs::Point start, geom
 		for (int i = 0; i < neighbors.size(); i++)
 		{
 			NODE new_node = neighbors[i];
+			
+			if (cost_map.occupied(DISCRETIZATION*new_node->x, DISCRETIZATION*new_node->y))
+			{
+				std::cout << "Node was occupied: (" << (DISCRETIZATION*new_node->x) << "," << (DISCRETIZATION*new_node->y) << ")" << std::endl;
+				continue;
+			}
 
 			bool closed = false;
 			for (int c = 0; c < closed_list.size(); c++)
