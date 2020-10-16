@@ -1,5 +1,4 @@
 // Author: Benned Hedegaard
-// Last revised 5/22/2020
 
 #ifndef EXECUTIVE_H
 #define EXECUTIVE_H
@@ -9,29 +8,35 @@
 #include "nav_msgs/Odometry.h"
 #include "planner/Query.h"
 
-class Executive
-{
-	public: // These data members can be accessed by other classes.
-		Executive(double reached, double replan); // Constructor
+class Executive {
+
+	public:
+	
+		/*
+			Constructor for Exective class.
+			reached - Distance (m) within which a waypoint is considered reached.
+			replan - Distance (m) within which replanning is halted.
+		*/
+		Executive( double reached, double replan ); // Constructor
 		virtual ~Executive(); // Deconstructor
 		
 		// Declare message handling functions for the class.
-		void handleOdom(const nav_msgs::Odometry::ConstPtr& msg);
-		void handleWaypoint(const geometry_msgs::Point::ConstPtr& msg);
+		void handleOdom( const nav_msgs::Odometry::ConstPtr& msg );
+		void handleWaypoint( const geometry_msgs::Point::ConstPtr& msg );
 		
 		void sendQuery();
 		
 		// Declare any ROS publishers.
-		ros::Publisher query_pub;
+		ros::Publisher query_pub; // TODO - Move publishers out of all classes for more general code
+		
+	protected:
+	
+		bool hasOdom; // Have we stored an odometry yet?
+		nav_msgs::Odometry _odom; // Store current state of robot.
+		std::vector<geometry_msgs::Point> _waypoints; // Store current list of goals.
 		
 		double REACHED; // Within this distance counts as reaching a waypoint.
 		double REPLAN; // Don't replan within this distance.
-		
-	protected: // These data members are inaccessible outside the class.
-		nav_msgs::Odometry _odom;
-		std::vector<geometry_msgs::Point> _waypoints;
-		
-		bool hasOdom;
 };
 
 #endif /* EXECUTIVE_H */
