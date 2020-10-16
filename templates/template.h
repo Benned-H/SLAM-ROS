@@ -1,5 +1,4 @@
 // Author: Benned Hedegaard
-// Last revised 5/16/2020
 
 #ifndef PACKAGE_NAME_H
 #define PACKAGE_NAME_H
@@ -14,14 +13,15 @@
 #include "ros/ros.h"
 #include "package_name/DataType.h" // etc.
 
-class ClassName
-{
+class ClassName {
+
 	public: // These data members can be accessed by other classes.
+	
 		ClassName(); // Constructor; could have input variables.
 		virtual ~ClassName(); // Deconstructor
 		
 		// Declare message handling functions for the class.
-		void handleMessageType(const package_name::DataType::ConstPtr& msg);
+		void handleMessageType( const package_name::DataType::ConstPtr& msg );
 		
 		// Declare any ROS publishers.
 		ros::Publisher datatype_pub;
@@ -29,10 +29,11 @@ class ClassName
 		double CONSTANT_VALUE; // e.g. some hyperparameter for the class.
 		
 	protected: // These data members are inaccessible outside the class.
+	
 		// Include any internal functions the class needs.
-		void drawCircle(double radius); // e.g. for a GUI
+		void drawCircle( double radius ); // e.g. for a GUI
 		
-		// Also include static member variables. Start names with underscores.
+		// Also include private member variables. Start names with underscores.
 		package_name::DataType _data;
 		bool _condition;
 };

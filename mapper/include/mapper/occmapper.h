@@ -14,6 +14,7 @@
 class OccMapper {
 
     // TODO - Create separate OccupancyGrid class to clean up which functions are where
+    // TODO - Rename this class to something clearer
 
 	public:
 	
