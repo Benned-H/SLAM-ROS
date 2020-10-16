@@ -17,7 +17,7 @@ class Executive {
 			reached - Distance (m) within which a waypoint is considered reached.
 			replan - Distance (m) within which replanning is halted.
 		*/
-		Executive( double reached, double replan ); // Constructor
+		Executive( const double& reached, const double& replan ); // Constructor
 		virtual ~Executive(); // Deconstructor
 		
 		// Declare message handling functions for the class.

@@ -1,5 +1,4 @@
 // Author: Benned Hedegaard
-// Last revised 5/29/2020
 
 #ifndef GUI_H
 #define GUI_H
@@ -13,38 +12,39 @@
 #include "simulator/Obstacles.h"
 #include "visualization_msgs/Marker.h"
 
-class GUI
-{
-	public: // These data members can be accessed by other classes.
-		GUI(double diameter); // Constructor; could have input variables.
+class GUI {
+
+	public:
+	
+		// TODO - Where is a model of the robot stored? Standardize
+		GUI( const double& diameter ); // Robot diameter (m) is included.
 		virtual ~GUI(); // Deconstructor
 		
-		void handleOdom(const nav_msgs::Odometry::ConstPtr& msg);
-		void handlePath(const planner::Path::ConstPtr& msg);
-		void handleLookaheadPoint(const geometry_msgs::Point::ConstPtr& msg);
-		void handleObstacles(const simulator::Obstacles::ConstPtr& msg);
+		void handleOdom( const nav_msgs::Odometry::ConstPtr& msg );
+		void handlePath( const planner::Path::ConstPtr& msg );
+		void handleLookaheadPoint( const geometry_msgs::Point::ConstPtr& msg );
+		void handleObstacles( const simulator::Obstacles::ConstPtr& msg );
 		
-		std_msgs::ColorRGBA color(double r, double g, double b, double a);
+		std_msgs::ColorRGBA color( const double& r, const double& g, const double& b, const double& a );
 		void update();
 		
 		ros::Publisher marker_pub;
 		
-		double ROBOT_DIAMETER;
-		
-	protected: // These data members are inaccessible outside the class.
-		void drawPose(geometry_msgs::Pose pose, double r, double g, double b);
-		void drawPath(planner::Path path, double r, double g, double b);
-		void drawLookahead(geometry_msgs::Point point, double radius, double r,
-			double g, double b);
-		void drawObstacles(double r, double g, double b);
+	protected:
+	
+		void drawPose( const geometry_msgs::Pose& pose, double r, double g, double b );
+		void drawPath( const planner::Path& path, double r, double g, double b );
+		void drawLookahead( const geometry_msgs::Point& point, double radius, double r, double g, double b );
+		void drawObstacles( double r, double g, double b );
 		
 		geometry_msgs::Pose _pose;
+		bool hasPath;
 		planner::Path _path;
+		bool hasLookahead;
 		geometry_msgs::Point _lookahead;
 		simulator::Obstacles _obstacles;
 		
-		bool hasPath;
-		bool hasLookahead;
+		double ROBOT_DIAMETER;
 };
 
 #endif /* GUI_H */

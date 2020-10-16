@@ -8,7 +8,7 @@
 	reached - Distance (m) within which a waypoint is considered reached.
 	replan - Distance (m) within which replanning is halted.
 */
-Executive::Executive( double reached, double replan ) {
+Executive::Executive( const double& reached, const double& replan ) {
 	REACHED = reached;
 	REPLAN = replan;
 	hasOdom = false;

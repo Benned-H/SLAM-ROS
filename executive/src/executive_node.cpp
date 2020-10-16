@@ -3,7 +3,9 @@
 #include "executive/executive.h"
 
 int main( int argc, char* argv[] ) {
-	Executive exec( 0.05, 0.5 ); // Inputs are reached and replan cutoffs.
+	double reached_radius = 0.05; // Within 5cm is considered reached waypoint.
+	double replan_radius = 0.5; // Within 0.5m we stop replanning.
+	Executive exec( reached_radius, replan_radius );
 	
 	ros::init( argc, argv, "executive_node" );
 	ros::NodeHandle node_handle;

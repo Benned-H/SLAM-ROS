@@ -1,5 +1,4 @@
 // Author: Benned Hedegaard
-// Last revised 5/29/2020
 
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
@@ -7,8 +6,7 @@
 #include <geometry_msgs/TransformStamped.h>
 
 // Broadcasts the robot's pose as a transform.
-void odomCallback(const nav_msgs::Odometry odom)
-{
+void odomCallback( const nav_msgs::Odometry& odom ) {
 	static tf2_ros::TransformBroadcaster br;
 	geometry_msgs::TransformStamped transformStamped;
 	
@@ -24,16 +22,12 @@ void odomCallback(const nav_msgs::Odometry odom)
 	br.sendTransform(transformStamped);
 }
 
-using namespace std;
-
-int main(int argc, char* argv[])
-{
-	ros::init(argc, argv, "transform_name");
-	ros::NodeHandle node_handle; // We use this to set up ROS connections.
+int main( int argc, char* argv[] ) {
+	ros::init( argc, argv, "transform_name" );
+	ros::NodeHandle node_handle;
 	
 	// Set up any subscribers
-	ros::Subscriber odom_sub = node_handle.subscribe("simulator/odom", 1,
-		&odomCallback);
+	ros::Subscriber odom_sub = node_handle.subscribe( "simulator/odom", 1, &odomCallback );
 	
 	sleep(1); // Wait 1 second; gives time for ROS connections to be made.
 	
