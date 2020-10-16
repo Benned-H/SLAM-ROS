@@ -7,7 +7,7 @@
 
 using namespace std;
 
-GridPlanner::GridPlanner(double discretization, geometry_msgs::Pose map_origin) : cost_map( 0.1, 50, 100, 100, 0.2, map_origin, 0.3, 0.05, 0.95) // Constructor
+GridPlanner::GridPlanner(double discretization, const OccMapper& mapArg ) : cost_map( mapArg )
 {
 	DISCRETIZATION = discretization;
 }

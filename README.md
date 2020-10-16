@@ -12,4 +12,5 @@ A repository for code developed by and for UR Robotics implementing various algo
 
 * Revisit GUI RViz files and ensure they're what we want to be using.
 * Various TO-DO comments throughout code.
+* Check mapper launch files as well.
 

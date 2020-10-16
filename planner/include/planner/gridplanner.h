@@ -17,7 +17,7 @@ using namespace std;
 class GridPlanner
 {
 	public: // These data members can be accessed by other classes.
-		GridPlanner(double discretization, geometry_msgs::Pose map_origin); // Constructor
+		GridPlanner(double discretization, const OccMapper& mapArg ); // Constructor
 		virtual ~GridPlanner(); // Deconstructor
 		
 		// Declare message handling functions for the class.
