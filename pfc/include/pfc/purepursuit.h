@@ -1,5 +1,4 @@
 // Author: Benned Hedegaard
-// Last revised 5/22/2020
 
 #ifndef PURE_PURSUIT_H
 #define PURE_PURSUIT_H
@@ -14,36 +13,37 @@
 #include "nav_msgs/Odometry.h"
 #include "planner/Path.h"
 
-class PurePursuit
-{
-	public: // These data members can be accessed by other classes.
-		PurePursuit(double lookahead, double turn_angle, double forward_v,
-			double turning_w);
+class PurePursuit {
+
+	public:
+	
+		// TODO - Move these velocity parameters to some MotionModel class
+		PurePursuit( const double& lookahead, const double& turn_angle, const double& forward_v, const double& turning_w );
 		virtual ~PurePursuit(); // Deconstructor
 		
 		// Declare message handling functions for the class.
-		void handleOdom(const nav_msgs::Odometry::ConstPtr& msg);
-		void handlePath(const planner::Path::ConstPtr& msg);
+		void handleOdom( const nav_msgs::Odometry::ConstPtr& msg );
+		void handlePath( const planner::Path::ConstPtr& msg );
 		
-		// Declare any ROS publishers.
+		// Declare any ROS publishers. TODO - Move outside the class
 		ros::Publisher command_pub;
 		ros::Publisher goal_point_pub;
+		
+	protected:
+	
+		double quat_to_yaw( const geometry_msgs::Quaternion& q );
+		geometry_msgs::Point getGoalPoint( const geometry_msgs::Pose& pose, const planner::Path& path );
+		void purePursuit();
+		
+		bool hasOdom;
+		nav_msgs::Odometry _odom;
+		bool hasPath;
+		planner::Path _path;
 		
 		double LOOKAHEAD; // Lookahead distance in the pure pursuit algorithm.
 		double TURNING_ANGLE; // Turn robot until goals are within this angle.
 		double DEFAULT_V; // Default driving speed.
 		double DEFAULT_W; // Default turning speed.
-		
-	protected: // These data members are inaccessible outside the class.
-		double quat_to_yaw(geometry_msgs::Quaternion q);
-		geometry_msgs::Point goalPoint(geometry_msgs::Pose pose, planner::Path path);
-		void purePursuit();
-		
-		nav_msgs::Odometry _odom;
-		planner::Path _path;
-		
-		bool hasOdom;
-		bool hasPath;
 };
 
 #endif /* PURE_PURSUIT_H */
