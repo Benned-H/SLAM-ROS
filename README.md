@@ -11,7 +11,9 @@ A repository for code developed by and for UR Robotics implementing various algo
 
 ## Demos
 
-Planner - Run `roslaunch planner planner_demo.launch` to see the planner operate on a continuous stream of queries from (0,0) to points on a 3m-radius circle.
+*Simulator* - Run `roslaunch simulator simulator-demo.launch` to see the simulator handle the constant motion command ($0.5$m/s, $\pi/4.0$ rad/s). The robot should drive in a circle.
+
+*Planner* - Run `roslaunch planner planner_demo.launch` to see the planner operate on a continuous stream of queries from (0,0) to points on a 3m-radius circle.
 
 ## Known TO-DO:
 
