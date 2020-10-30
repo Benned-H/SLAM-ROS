@@ -8,7 +8,7 @@
 #include "geometry_msgs/Point.h"
 
 int main( int argc, char* argv[] ) {
-	ros::init( argc, argv, "query_publisher" );
+	ros::init( argc, argv, "planner_demo_node" );
 	ros::NodeHandle node_handle;
 	
 	// Set up any publishers inside the class instance.

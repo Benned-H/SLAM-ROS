@@ -7,8 +7,6 @@ A repository for code developed by and for UR Robotics implementing various algo
 * Occupancy grid mapping using laserscan sensor data.
 
 
-
-
 ## Demos
 
 *Simulator* - Run `roslaunch simulator simulator-demo.launch` to see the simulator handle the constant motion command ($0.5$m/s, $\pi/4.0$ rad/s). The robot should drive in a circle.
