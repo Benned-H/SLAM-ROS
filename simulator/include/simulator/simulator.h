@@ -1,5 +1,4 @@
 // Author: Benned Hedegaard
-// Last revised 5/29/2020
 
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
@@ -12,21 +11,24 @@
 #include "simulator/Obstacles.h"
 #include "sensor_msgs/LaserScan.h"
 
-class Simulator
-{
-	public: // These data members can be accessed by other classes.
+class Simulator {
+
+	public:
+	
 		Simulator(); // Constructor
 		virtual ~Simulator(); // Deconstructor
 		
 		// Declare message handling functions for the class.
-		void handleMotionCommand(const geometry_msgs::Twist::ConstPtr& msg);
-		void handleObstacles(const simulator::Obstacles::ConstPtr& msg);
+		void handleMotionCommand( const geometry_msgs::Twist::ConstPtr& msg );
+		void handleObstacles( const simulator::Obstacles::ConstPtr& msg );
 		
-		void step(double dt);
-		nav_msgs::Odometry getOdometry(void);
-		sensor_msgs::LaserScan getScan(int beams);
+		void step( const double& dt );
+		nav_msgs::Odometry getOdometry();
+		sensor_msgs::LaserScan getScan( int beams );
 		
-	protected: // These data members are inaccessible outside the class.
+	protected:
+	    // TODO - Create a custom robot state and motion command type.
+	
 		// Also include static member variables. Start names with underscores.
 		Eigen::Vector2d _u; // Current motion command.
 		Eigen::Vector3d _x; // Current robot pose.

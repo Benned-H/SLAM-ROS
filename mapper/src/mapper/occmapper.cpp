@@ -140,8 +140,8 @@ void OccMapper::updateMap( const geometry_msgs::Pose& pose, const sensor_msgs::L
 		// Step along the laser scan; all cells here are free.
 		for ( int step = 0; step < free_steps; step++ ) {
 			double range = step*RESOLUTION;
-			double x = pose.position.x + range*cos(global_bearing);
-			double y = pose.position.y + range*sin(global_bearing);
+			double x = pose.position.x + range*std::cos(global_bearing);
+			double y = pose.position.y + range*std::sin(global_bearing);
 			
 			// Avoid accessing out-of-bounds cells.
 			if ( !inMap(x, y) ) {
@@ -155,8 +155,8 @@ void OccMapper::updateMap( const geometry_msgs::Pose& pose, const sensor_msgs::L
 		// Step across the occupied range for this laser.
 		for ( int step = 0; step < _occ_steps; step++ ) {
 			double range = scan.ranges[i] + step*RESOLUTION;
-			double x = pose.position.x + range*cos(global_bearing);
-			double y = pose.position.y + range*sin(global_bearing);
+			double x = pose.position.x + range*std::cos(global_bearing);
+			double y = pose.position.y + range*std::sin(global_bearing);
 			
 			// Avoid accessing out-of-bounds cells.
 			if ( !inMap(x, y) ) {
@@ -172,8 +172,7 @@ void OccMapper::updateMap( const geometry_msgs::Pose& pose, const sensor_msgs::L
 			double result = _map.data[*free] + l_free - l0;
 			if ( result < 0.0 ) {
 				result = 0;
-			}
-			if ( result > 100.0 ) {
+			} else if ( result > 100.0 ) {
 				result = 100;
 			}
 			_map.data[*free] = (int) result;
@@ -183,8 +182,7 @@ void OccMapper::updateMap( const geometry_msgs::Pose& pose, const sensor_msgs::L
 			double result = _map.data[*occ] + l_occ - l0;
 			if ( result < 0.0 ) {
 				result = 0;
-			}
-			if ( result > 100.0 ) {
+			} else if ( result > 100.0 ) {
 				result = 100;
 			}
 			_map.data[*occ] = (int) result;

@@ -107,7 +107,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 	INCLUDE_DIRS include
-	LIBRARIES gridplanner
+	LIBRARIES planner
 #  CATKIN_DEPENDS geometry_msgs
 #  DEPENDS system_lib
 )
@@ -124,14 +124,15 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(gridplanner
-	src/${PROJECT_NAME}/gridplanner.cpp
+add_library(planner
+	src/planner/gridplanner.cpp
+	src/planner/node.cpp
 )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-add_dependencies(gridplanner ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(planner ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -153,7 +154,7 @@ add_dependencies(query_publisher ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 ## Specify libraries to link a library or executable target against
 target_link_libraries(grid_planner_node
 	${catkin_LIBRARIES}
-	gridplanner
+	planner
 	occmapper
 )
 

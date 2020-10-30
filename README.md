@@ -8,9 +8,15 @@ A repository for code developed by and for UR Robotics implementing various algo
 
 
 
+
+## Demos
+
+Planner - Run `roslaunch planner planner_demo.launch` to see the planner operate on a continuous stream of queries from (0,0) to points on a 3m-radius circle.
+
 ## Known TO-DO:
 
 * Revisit GUI RViz files and ensure they're what we want to be using.
 * Various TO-DO comments throughout code.
-* Check mapper launch files as well.
+* Check simulator and mapper launch files as well.
+
 
