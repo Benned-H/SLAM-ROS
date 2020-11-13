@@ -15,14 +15,20 @@ class EKFSLAM{
         virtual ~EKFSLAM();
 
         void handle_input(const geometry_msgs::Twist::ConstPtr& msg);
+        void handle_odometry(const nav_msgs::Odometry::ConstPtr& msg);
         void handle_observations(/* const perception::Observations::ConstPtr& msg */);
-        void step();
+        void step(const double& dt);
 
-        Eigen::VectorXd mean;
-        Eigen::MatrixXd covariance;
-        geometry_msgs::Twist input;
-        /*perception::Observations observations;*/
-        std::vector<int> observed_landmarks;
+        nav_msgs::Odometry estimated_odometry() const;
+
+    private:
+        geometry_msgs::Twist _u;
+        perception::Observations _z;
+        std::vector<int> _observed_landmarks;
+        Eigen::VectorXd _mu;
+        Eigen::MatrixXd _sigma;
+        Eigen::VectorXd _alpha;
+        Eigen::MatrixXd _q;
 };
 
 std::ostream& operator<<(std::ostream& out, const EKFSLAM& other);
